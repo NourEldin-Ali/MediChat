@@ -1,0 +1,15 @@
+streamlit
+transformers
+huggingface_hub
+python-dotenv
+torch
+datasets
+trl
+peft
+hf_transfer
+bitsandbytes
+triton
+xformers
+unsloth
+git+https://github.com/unslothai/unsloth.git
+unsloth_zoo
