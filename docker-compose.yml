@@ -1,0 +1,43 @@
+version: '1'
+
+services:
+  finetune:
+    build:
+      context: ./finetune
+      dockerfile: Dockerfile
+    volumes:
+      - ./finetune:/app
+      - ./data:/data
+      - ./models:/models
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - HUGGING_FACE_HUB_TOKEN=${HUGGING_FACE_HUB_TOKEN}
+      - CUDA_VISIBLE_DEVICES=""  # Force CPU mode
+    depends_on:
+      - mlflow
+
+  mlflow:
+    build:
+      context: ./mlflow
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlflow-data:/mlflow
+    restart: always
+
+  inference:
+    build:
+      context: ./inference
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./models:/models
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
